@@ -110,6 +110,7 @@ import de.ovgu.featureide.fm.ui.editors.elements.GraphicalFeatureModel;
 import de.ovgu.featureide.fm.ui.editors.elements.GraphicalFeatureModelFormat;
 import de.ovgu.featureide.fm.ui.editors.featuremodel.GUIDefaults;
 import de.ovgu.featureide.fm.ui.editors.featuremodel.actions.AbstractAction;
+import de.ovgu.featureide.fm.ui.editors.featuremodel.actions.AddAttributeAction;
 import de.ovgu.featureide.fm.ui.editors.featuremodel.actions.AdjustModelToEditorSizeAction;
 import de.ovgu.featureide.fm.ui.editors.featuremodel.actions.AlternativeAction;
 import de.ovgu.featureide.fm.ui.editors.featuremodel.actions.AndAction;
@@ -185,6 +186,7 @@ public class FeatureDiagramEditor extends ScrollingGraphicalViewer implements GU
 	private CreateLayerAction createLayerAction;
 	private CreateCompoundAction createCompoundAction;
 	private DeleteAction deleteAction;
+	private AddAttributeAction addAttributeAction;
 	private DeleteAllAction deleteAllAction;
 	private MandatoryAction mandatoryAction;
 	private AbstractAction abstractAction;
@@ -474,7 +476,9 @@ public class FeatureDiagramEditor extends ScrollingGraphicalViewer implements GU
 
 	private void createActions() {
 		final IFeatureModel featureModel = getFeatureModel();
-
+		
+		addAttributeAction = new AddAttributeAction(this, featureModel, featureModel);
+		
 		calculateDependencyAction = new CalculateDependencyAction(this, featureModel);
 		createLayerAction = new CreateLayerAction(this, featureModel);
 		createCompoundAction = new CreateCompoundAction(this, featureModel);
@@ -661,6 +665,7 @@ public class FeatureDiagramEditor extends ScrollingGraphicalViewer implements GU
 			menu.add(createConstraintWithAction);
 			menu.add(renameAction);
 			menu.add(deleteAction);
+			menu.add(addAttributeAction);
 			menu.add(deleteAllAction);
 			menu.add(new Separator());
 			connectionEntrys(menu);
