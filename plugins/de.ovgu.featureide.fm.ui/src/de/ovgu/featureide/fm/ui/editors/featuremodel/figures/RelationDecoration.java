@@ -23,6 +23,7 @@ package de.ovgu.featureide.fm.ui.editors.featuremodel.figures;
 import java.util.List;
 
 import org.eclipse.draw2d.Graphics;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Color;
@@ -70,13 +71,27 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 		if (this instanceof LegendRelationDecoration) {
 			super.setLocation(p.translate((-getBounds().width >> 1) + 1, 0));
 		} else {
-			setSize(TARGET_ANCHOR_DIAMETER, TARGET_ANCHOR_DIAMETER);
 			if (FeatureUIHelper.hasVerticalLayout(featureModel)) {
+				setSize(calculateDecorationSize());
 				super.setLocation(p.translate(0, (-getBounds().width >> 1)));
 			} else {
+				setSize(TARGET_ANCHOR_DIAMETER, TARGET_ANCHOR_DIAMETER);
 				super.setLocation(p.translate((-getBounds().width >> 1), 0));
 			}
 		}
+	}
+	
+	public Dimension calculateDecorationSize() {
+		int min = Integer.MAX_VALUE;
+		if ((children != null) && (children.size() > 1)) {
+			for (final IGraphicalFeature curChild : children) {
+				min = curChild.getLocation().x < min ? curChild.getLocation().x : min;
+			}
+			int distance = Math.abs(getBounds().getLeft().x - min);
+			if (distance > 200)
+				return new Dimension(distance/4, distance/4);
+		}
+		return new Dimension(TARGET_ANCHOR_DIAMETER, TARGET_ANCHOR_DIAMETER);
 	}
 
 	@Override
