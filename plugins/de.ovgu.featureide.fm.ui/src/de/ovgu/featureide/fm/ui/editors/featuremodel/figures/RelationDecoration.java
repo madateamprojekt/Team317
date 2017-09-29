@@ -38,6 +38,8 @@ import de.ovgu.featureide.fm.ui.properties.FMPropertyManager;
  * A decoration for a feature connection that indicates its group type.
  *
  * @author Thomas Thuem
+ * @author Stefanie Schober
+ * @author Jann-Ole Henningson
  */
 public class RelationDecoration extends ConnectionDecoration implements GUIDefaults {
 
@@ -49,7 +51,10 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 	private List<IGraphicalFeature> children;
 
 	private IGraphicalFeatureModel featureModel;
-
+	
+	private int thresholdAngleMax = 20;
+	private int thresholdAngleMin = 5;
+	
 	public RelationDecoration(final boolean fill, final IGraphicalFeature lastChild) {
 		this.fill = fill;
 		this.lastChild = lastChild;
@@ -58,6 +63,7 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 		} else {
 			children = FeatureUIHelper.getGraphicalSiblings(lastChild);
 		}
+		
 		setForegroundColor(FMPropertyManager.getDecoratorForegroundColor());
 		setBackgroundColor(FMPropertyManager.getDecoratorForegroundColor());
 		setSize(TARGET_ANCHOR_DIAMETER, TARGET_ANCHOR_DIAMETER);
@@ -82,14 +88,35 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 	}
 	
 	public Dimension calculateDecorationSize() {
+		double minAngle = Double.MAX_VALUE;
+		double maxAngle = Double.MIN_VALUE;
 		int min = Integer.MAX_VALUE;
+		
 		if ((children != null) && (children.size() > 1)) {
 			for (final IGraphicalFeature curChild : children) {
 				min = curChild.getLocation().x < min ? curChild.getLocation().x : min;
+				
+				final Point featureLocation = FeatureUIHelper.getSourceLocation(curChild);
+				final double currentAngle = calculateAngle(getBounds().getLeft(), featureLocation);
+				
+				if (currentAngle < minAngle) {
+					minAngle = currentAngle;
+				}
+				if (currentAngle > maxAngle) {
+					maxAngle = currentAngle;
+				}
 			}
-			int distance = Math.abs(getBounds().getLeft().x - min);
-			if (distance > 200)
-				return new Dimension(distance/4, distance/4);
+		}
+		
+		double angle = maxAngle - minAngle;
+		int distance = Math.abs(getBounds().getLeft().x - min);
+		
+		if (angle <= thresholdAngleMax && angle > thresholdAngleMin) {
+			int size = TARGET_ANCHOR_DIAMETER + 
+					(int)((double)Math.abs(TARGET_ANCHOR_DIAMETER - distance) / (angle - thresholdAngleMin));
+			return new Dimension(size, size);
+		} else if (angle <= thresholdAngleMin) {
+			return new Dimension(distance, distance);
 		}
 		return new Dimension(TARGET_ANCHOR_DIAMETER, TARGET_ANCHOR_DIAMETER);
 	}
