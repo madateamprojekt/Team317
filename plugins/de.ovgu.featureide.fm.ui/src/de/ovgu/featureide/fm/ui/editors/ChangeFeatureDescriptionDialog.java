@@ -33,6 +33,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import de.ovgu.featureide.fm.core.base.impl.AnAttribute;
+
+
 import de.ovgu.featureide.fm.ui.editors.featuremodel.GUIDefaults;
 
 /**

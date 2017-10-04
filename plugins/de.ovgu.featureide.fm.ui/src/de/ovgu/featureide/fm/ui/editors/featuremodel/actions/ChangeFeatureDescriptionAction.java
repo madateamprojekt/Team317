@@ -29,6 +29,9 @@ import de.ovgu.featureide.fm.core.base.event.FeatureIDEEvent;
 import de.ovgu.featureide.fm.core.base.event.FeatureIDEEvent.EventType;
 import de.ovgu.featureide.fm.ui.editors.ChangeFeatureDescriptionDialog;
 
+import de.ovgu.featureide.fm.core.base.impl.AnAttribute;
+
+
 /**
  * Opens dialog to change the description of a feature
  *

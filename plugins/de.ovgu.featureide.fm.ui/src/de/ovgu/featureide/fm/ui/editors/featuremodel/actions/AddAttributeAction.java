@@ -22,6 +22,14 @@ package de.ovgu.featureide.fm.ui.editors.featuremodel.actions;
 
 
 import static de.ovgu.featureide.fm.core.localization.StringTable.ADD_ATTRIBUTE;
+
+import de.ovgu.featureide.fm.core.base.impl.AnAttribute;
+import de.ovgu.featureide.fm.core.base.impl.FeatureModel;
+import de.ovgu.featureide.fm.core.base.IFeatureModel;
+import de.ovgu.featureide.fm.core.base.event.FeatureIDEEvent;
+import de.ovgu.featureide.fm.core.base.event.FeatureIDEEvent.EventType;
+import de.ovgu.featureide.fm.ui.editors.ChangeFeatureDescriptionDialog;
+
 import static de.ovgu.featureide.fm.core.localization.StringTable.ADD_ATTRIBUTES;
 import static de.ovgu.featureide.fm.core.localization.StringTable.DELETE_INCLUDING_SUBFEATURES;
 import static de.ovgu.featureide.fm.core.localization.StringTable.FEATURE_DESCRIPTION;
@@ -75,8 +83,15 @@ public class AddAttributeAction extends SingleSelectionAction {
 	public void run() {
 		String attribute = "";
 		
+		String name = "";
+		
+		for (AnAttribute a : feature.getStructure().getattributeListRecursive()) {
+			name = a.getName();
+		}
+		 
 		final AddAttributeDialog dialog =
-			new AddAttributeDialog(null, ADD_ATTRIBUTES, HERE_YOU_CAN_ADD_ATTRIBUTES + feature.getName() + "'", attribute);
+			new AddAttributeDialog(null, ADD_ATTRIBUTES, HERE_YOU_CAN_ADD_ATTRIBUTES + name + "'", attribute);
+		
 		dialog.open();
 		
 	}
