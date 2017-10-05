@@ -111,6 +111,8 @@ import de.ovgu.featureide.fm.ui.editors.elements.GraphicalFeatureModelFormat;
 import de.ovgu.featureide.fm.ui.editors.featuremodel.GUIDefaults;
 import de.ovgu.featureide.fm.ui.editors.featuremodel.actions.AbstractAction;
 import de.ovgu.featureide.fm.ui.editors.featuremodel.actions.AddAttributeAction;
+import de.ovgu.featureide.fm.ui.editors.featuremodel.actions.AddTestAction;
+import de.ovgu.featureide.fm.ui.editors.featuremodel.actions.AddAttrTableAction;
 import de.ovgu.featureide.fm.ui.editors.featuremodel.actions.AdjustModelToEditorSizeAction;
 import de.ovgu.featureide.fm.ui.editors.featuremodel.actions.AlternativeAction;
 import de.ovgu.featureide.fm.ui.editors.featuremodel.actions.AndAction;
@@ -187,6 +189,8 @@ public class FeatureDiagramEditor extends ScrollingGraphicalViewer implements GU
 	private CreateCompoundAction createCompoundAction;
 	private DeleteAction deleteAction;
 	private AddAttributeAction addAttributeAction;
+	private AddTestAction addTestAction;
+	private AddAttrTableAction addAttrTableAction;
 	private DeleteAllAction deleteAllAction;
 	private MandatoryAction mandatoryAction;
 	private AbstractAction abstractAction;
@@ -478,6 +482,8 @@ public class FeatureDiagramEditor extends ScrollingGraphicalViewer implements GU
 		final IFeatureModel featureModel = getFeatureModel();
 		
 		addAttributeAction = new AddAttributeAction(this, featureModel, featureModel);
+		addAttrTableAction = new AddAttrTableAction(this, featureModel, featureModel);
+		addTestAction = new AddTestAction(this, featureModel, featureModel);
 		
 		calculateDependencyAction = new CalculateDependencyAction(this, featureModel);
 		createLayerAction = new CreateLayerAction(this, featureModel);
@@ -666,6 +672,8 @@ public class FeatureDiagramEditor extends ScrollingGraphicalViewer implements GU
 			menu.add(renameAction);
 			menu.add(deleteAction);
 			menu.add(addAttributeAction);
+			menu.add(addAttrTableAction);
+			menu.add(addTestAction);
 			menu.add(deleteAllAction);
 			menu.add(new Separator());
 			connectionEntrys(menu);
