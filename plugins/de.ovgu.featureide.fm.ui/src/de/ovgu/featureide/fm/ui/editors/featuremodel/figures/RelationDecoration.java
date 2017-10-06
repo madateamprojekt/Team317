@@ -91,9 +91,11 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 		
 		if ((children != null) && (children.size() > 1)) {
 			for (final IGraphicalFeature curChild : children) {
-				min = curChild.getLocation().x < min ? curChild.getLocation().x : min;			
+				min = curChild.getLocation().x < min ? curChild.getLocation().x : min;
+				
 				final Point featureLocation = FeatureUIHelper.getSourceLocation(curChild);
 				final double currentAngle = calculateAngle(getBounds().getLeft(), featureLocation);
+				
 				if (currentAngle < minAngle) {
 					minAngle = currentAngle;
 				}
@@ -110,7 +112,7 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 			int size = TARGET_ANCHOR_DIAMETER + 
 					(int)((double)Math.abs(TARGET_ANCHOR_DIAMETER - distance) / (angle - thresholdAngleMin));
 			if(size % 2 == 1){
-				size -= 1;
+				size += 1;
 			}
 			return new Dimension(size, size);
 		} else if (angle <= thresholdAngleMin) {
