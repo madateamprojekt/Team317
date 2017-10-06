@@ -23,6 +23,7 @@ package de.ovgu.featureide.fm.ui.editors.featuremodel.figures;
 import java.util.List;
 
 import org.eclipse.draw2d.Graphics;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Color;
@@ -37,18 +38,24 @@ import de.ovgu.featureide.fm.ui.properties.FMPropertyManager;
  * A decoration for a feature connection that indicates its group type.
  *
  * @author Thomas Thuem
+ * @author Stefanie Schober
+ * @author Jann-Ole Henningson
  */
 public class RelationDecoration extends ConnectionDecoration implements GUIDefaults {
 
 	private final boolean fill;
-
 	private Point referencePoint;
-
 	private IGraphicalFeature lastChild;
 	private List<IGraphicalFeature> children;
-
 	private IGraphicalFeatureModel featureModel;
-
+	
+	/*
+	 * Threshold to say at which degree the circle starts to grow
+	 * If the angle is smaller than thresholdAngleMin, it will be stretched to the biggest possible size
+	 */
+	private int thresholdAngleMax = 25;
+	private int thresholdAngleMin = 2;
+	
 	public RelationDecoration(final boolean fill, final IGraphicalFeature lastChild) {
 		this.fill = fill;
 		this.lastChild = lastChild;
@@ -70,13 +77,54 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 		if (this instanceof LegendRelationDecoration) {
 			super.setLocation(p.translate((-getBounds().width >> 1) + 1, 0));
 		} else {
-			setSize(TARGET_ANCHOR_DIAMETER, TARGET_ANCHOR_DIAMETER);
 			if (FeatureUIHelper.hasVerticalLayout(featureModel)) {
+				setSize(calculateDecorationSize());
 				super.setLocation(p.translate(0, (-getBounds().width >> 1)));
 			} else {
+				setSize(TARGET_ANCHOR_DIAMETER, TARGET_ANCHOR_DIAMETER);
 				super.setLocation(p.translate((-getBounds().width >> 1), 0));
 			}
 		}
+	}
+	
+	public Dimension calculateDecorationSize() {
+		double minAngle = Double.MAX_VALUE;
+		double maxAngle = Double.MIN_VALUE;
+		int min = Integer.MAX_VALUE;
+		
+		if ((children != null) && (children.size() > 1)) {
+			for (final IGraphicalFeature curChild : children) {
+				min = curChild.getLocation().x < min ? curChild.getLocation().x : min;
+				
+				final Point featureLocation = FeatureUIHelper.getSourceLocation(curChild);
+				final double currentAngle = calculateAngle(getBounds().getLeft(), featureLocation);
+				
+				if (currentAngle < minAngle) {
+					minAngle = currentAngle;
+				}
+				if (currentAngle > maxAngle) {
+					maxAngle = currentAngle;
+				}
+			}
+		}
+		
+		double angle = maxAngle - minAngle;
+		int distance = Math.abs(getBounds().getLeft().x - min);
+		
+		if (angle <= thresholdAngleMax && angle > thresholdAngleMin) {
+			int size = TARGET_ANCHOR_DIAMETER + 
+					(int)((double)Math.abs(TARGET_ANCHOR_DIAMETER - distance) / (angle - thresholdAngleMin));
+			
+			//If the size is uneven, add 1 to prevent "jumping" circles at certain zoom-factors
+			if(size % 2 == 1){
+				size += 1;
+			}
+			
+			return new Dimension(size, size);
+		} else if (angle <= thresholdAngleMin) {
+			return new Dimension(distance, distance);
+		}
+		return new Dimension(TARGET_ANCHOR_DIAMETER, TARGET_ANCHOR_DIAMETER);
 	}
 
 	@Override
@@ -112,8 +160,9 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 		} else {
 			r = new Rectangle(getBounds()).translate(0, (-getBounds().height >> 1)).shrink(1, 1);
 		}
-		final Point center = verticalLayout ? getBounds().getLeft() : getBounds().getTop();
-
+		
+		Point center = verticalLayout ? getBounds().getLeft() : getBounds().getTop();
+		
 		if (this instanceof LegendRelationDecoration) {
 			maxAngle = calculateAngle(center, getFeatureLocation());
 			minAngle = calculateAngle(center, referencePoint);
@@ -134,6 +183,7 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 				return;
 			}
 		}
+
 		if (fill) {
 			Draw2dHelper.fillArc(graphics, r, (int) minAngle, (int) (maxAngle - minAngle));
 		} else {
