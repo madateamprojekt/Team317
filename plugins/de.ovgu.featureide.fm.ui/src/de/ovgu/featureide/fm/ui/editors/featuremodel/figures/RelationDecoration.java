@@ -44,11 +44,15 @@ import de.ovgu.featureide.fm.ui.properties.FMPropertyManager;
 public class RelationDecoration extends ConnectionDecoration implements GUIDefaults {
 
 	private final boolean fill;
-	private Point lastCenter;
 	private Point referencePoint;
 	private IGraphicalFeature lastChild;
 	private List<IGraphicalFeature> children;
 	private IGraphicalFeatureModel featureModel;
+	
+	/*
+	 * Threshold to say at which degree the circle starts to grow
+	 * If the angle is smaller than thresholdAngleMin, it will be stretched to the biggest possible size
+	 */
 	private int thresholdAngleMax = 25;
 	private int thresholdAngleMin = 2;
 	
@@ -66,7 +70,6 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 		if (lastChild != null) {
 			featureModel = lastChild.getGraphicalModel();
 		}
-		lastCenter = getBounds().getLeft();
 	}
 
 	@Override
@@ -111,9 +114,12 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 		if (angle <= thresholdAngleMax && angle > thresholdAngleMin) {
 			int size = TARGET_ANCHOR_DIAMETER + 
 					(int)((double)Math.abs(TARGET_ANCHOR_DIAMETER - distance) / (angle - thresholdAngleMin));
+			
+			//If the size is uneven, add 1 to prevent "jumping" circles at certain zoom-factors
 			if(size % 2 == 1){
 				size += 1;
 			}
+			
 			return new Dimension(size, size);
 		} else if (angle <= thresholdAngleMin) {
 			return new Dimension(distance, distance);
@@ -154,11 +160,8 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 		} else {
 			r = new Rectangle(getBounds()).translate(0, (-getBounds().height >> 1)).shrink(1, 1);
 		}
-		Point center = verticalLayout ? getBounds().getLeft() : getBounds().getTop();
-		lastCenter = center;
 		
-		if (Math.abs(center.y - lastCenter.y) == 1)
-			center = new Point(center.x, center.y + 1);
+		Point center = verticalLayout ? getBounds().getLeft() : getBounds().getTop();
 		
 		if (this instanceof LegendRelationDecoration) {
 			maxAngle = calculateAngle(center, getFeatureLocation());
