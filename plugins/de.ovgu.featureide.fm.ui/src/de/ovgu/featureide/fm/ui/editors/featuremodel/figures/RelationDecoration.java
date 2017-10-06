@@ -44,16 +44,13 @@ import de.ovgu.featureide.fm.ui.properties.FMPropertyManager;
 public class RelationDecoration extends ConnectionDecoration implements GUIDefaults {
 
 	private final boolean fill;
-
+	private Point lastCenter;
 	private Point referencePoint;
-
 	private IGraphicalFeature lastChild;
 	private List<IGraphicalFeature> children;
-
 	private IGraphicalFeatureModel featureModel;
-	
-	private int thresholdAngleMax = 20;
-	private int thresholdAngleMin = 5;
+	private int thresholdAngleMax = 25;
+	private int thresholdAngleMin = 2;
 	
 	public RelationDecoration(final boolean fill, final IGraphicalFeature lastChild) {
 		this.fill = fill;
@@ -63,13 +60,13 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 		} else {
 			children = FeatureUIHelper.getGraphicalSiblings(lastChild);
 		}
-		
 		setForegroundColor(FMPropertyManager.getDecoratorForegroundColor());
 		setBackgroundColor(FMPropertyManager.getDecoratorForegroundColor());
 		setSize(TARGET_ANCHOR_DIAMETER, TARGET_ANCHOR_DIAMETER);
 		if (lastChild != null) {
 			featureModel = lastChild.getGraphicalModel();
 		}
+		lastCenter = getBounds().getLeft();
 	}
 
 	@Override
@@ -94,11 +91,9 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 		
 		if ((children != null) && (children.size() > 1)) {
 			for (final IGraphicalFeature curChild : children) {
-				min = curChild.getLocation().x < min ? curChild.getLocation().x : min;
-				
+				min = curChild.getLocation().x < min ? curChild.getLocation().x : min;			
 				final Point featureLocation = FeatureUIHelper.getSourceLocation(curChild);
 				final double currentAngle = calculateAngle(getBounds().getLeft(), featureLocation);
-				
 				if (currentAngle < minAngle) {
 					minAngle = currentAngle;
 				}
@@ -114,6 +109,9 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 		if (angle <= thresholdAngleMax && angle > thresholdAngleMin) {
 			int size = TARGET_ANCHOR_DIAMETER + 
 					(int)((double)Math.abs(TARGET_ANCHOR_DIAMETER - distance) / (angle - thresholdAngleMin));
+			if(size % 2 == 1){
+				size -= 1;
+			}
 			return new Dimension(size, size);
 		} else if (angle <= thresholdAngleMin) {
 			return new Dimension(distance, distance);
@@ -154,8 +152,12 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 		} else {
 			r = new Rectangle(getBounds()).translate(0, (-getBounds().height >> 1)).shrink(1, 1);
 		}
-		final Point center = verticalLayout ? getBounds().getLeft() : getBounds().getTop();
-
+		Point center = verticalLayout ? getBounds().getLeft() : getBounds().getTop();
+		lastCenter = center;
+		
+		if (Math.abs(center.y - lastCenter.y) == 1)
+			center = new Point(center.x, center.y + 1);
+		
 		if (this instanceof LegendRelationDecoration) {
 			maxAngle = calculateAngle(center, getFeatureLocation());
 			minAngle = calculateAngle(center, referencePoint);
@@ -176,6 +178,7 @@ public class RelationDecoration extends ConnectionDecoration implements GUIDefau
 				return;
 			}
 		}
+
 		if (fill) {
 			Draw2dHelper.fillArc(graphics, r, (int) minAngle, (int) (maxAngle - minAngle));
 		} else {
