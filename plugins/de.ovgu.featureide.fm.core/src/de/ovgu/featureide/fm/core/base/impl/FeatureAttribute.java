@@ -36,11 +36,11 @@ public class FeatureAttribute {
 	protected String value;
 	protected String unit;
 	protected boolean recursive;
-	protected Types v;
+	protected Types type;
 
 	public FeatureAttribute() {
 		name = "";
-		v = null;
+		type = null;
 		recursive = false;
 		value = "";
 		unit = "";
@@ -64,11 +64,11 @@ public class FeatureAttribute {
 	}
 
 	public Types getType() {
-		return v;
+		return type;
 	}
 	
 	public String getTypeString() {
-		return v.toString().toLowerCase();
+		return type.toString().toLowerCase();
 	}
 
 	public String getTypeNames() {
@@ -104,13 +104,13 @@ public class FeatureAttribute {
 		type = type.toUpperCase();
 		for (final Types typeNames : Types.values()) {
 			if (typeNames.toString().equals(type)) {
-				this.v = typeNames;
+				this.type = typeNames;
 			}
 		}
 	}
 
 	public void setType(Types type) {
-		this.v = type;
+		this.type = type;
 	}
 
 	public void setUnit(String unit) {
@@ -141,21 +141,21 @@ public class FeatureAttribute {
 	}
 	
 	public boolean checkValue() {
-		if (v.toString().equals("LONG")) {
+		if (type.toString().equals("LONG")) {
 			try {
 				Long.parseLong(value);
 			} catch (NumberFormatException e) {
 				return false;
 			}
 		}
-		if (v.toString().equals("DOUBLE")) {
+		if (type.toString().equals("DOUBLE")) {
 			try {
 				Double.parseDouble(value);
 			} catch (NumberFormatException e) {
 				return false;
 			}
 		}
-		if (v.toString().equals("BOOLEAN")) {
+		if (type.toString().equals("BOOLEAN")) {
 			if (value.toLowerCase().equals("true") || value.toLowerCase().equals("false")) {
 				return true;
 			}
