@@ -289,6 +289,9 @@ public class XmlFeatureModelFormat extends AXMLFormat<IFeatureModel> implements 
 				}
 			} else if (nodeName.equals(VALUE)) {
 				inherited.setValue(attributeValue);
+				if (!inherited.checkValue()) {
+					throwError("Wrong Type for this inherited attribute. Should be: " + inherited.getParent().getTypeString(), e);
+				}
 			} else {
 				throwError("Wrong parameters or too few parameters in: " + nodeMap.item(0), e);
 			}

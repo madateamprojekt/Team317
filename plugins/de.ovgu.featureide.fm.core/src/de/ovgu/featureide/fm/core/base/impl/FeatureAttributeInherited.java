@@ -37,6 +37,10 @@ public class FeatureAttributeInherited {
 	public FeatureAttributeInherited(FeatureAttribute fa) {
 		parent = fa;
 	}
+	
+	public String getUnit() {
+		return parent.getUnit();
+	}
 
 	public String getName() {
 		return parent.getName();

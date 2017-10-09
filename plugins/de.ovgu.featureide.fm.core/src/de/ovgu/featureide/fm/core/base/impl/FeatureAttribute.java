@@ -163,23 +163,23 @@ public class FeatureAttribute {
 		return true;
 	}
 	
-	public boolean checkValue(String v) {
-		if (v.toString().equals("LONG")) {
+	public boolean checkValue(String value) {
+		if (type.toString().equals("LONG")) {
 			try {
 				Long.parseLong(value);
 			} catch (NumberFormatException e) {
 				return false;
 			}
 		}
-		if (v.toString().equals("DOUBLE")) {
+		if (type.toString().equals("DOUBLE")) {
 			try {
 				Double.parseDouble(value);
 			} catch (NumberFormatException e) {
 				return false;
 			}
 		}
-		if (v.toString().equals("BOOLEAN")) {
-			if (v.toLowerCase().equals("true") || v.toLowerCase().equals("false")) {
+		if (type.toString().equals("BOOLEAN")) {
+			if (value.toLowerCase().equals("true") || value.toLowerCase().equals("false")) {
 				return true;
 			}
 		}
