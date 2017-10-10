@@ -94,13 +94,13 @@ public class FullViewportAutoexposeHelper extends ViewportAutoexposeHelper {
 
 		Viewport port = findViewport(owner);
 		Point oldLoc = port.getViewLocation();
-		Point newLoc = getNewLoc(oldLoc, getRect().getPosition(point), getOffset());
+		Point newLoc = getNewLocation(oldLoc, getInnerBounds().getPosition(point), getOffset());
 		port.setViewLocation(newLoc);
 		return true;
 	}
 
 	private boolean shouldScroll(Point point) {
-		return !getRect().contains(point);
+		return !getInnerBounds().contains(point);
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class FullViewportAutoexposeHelper extends ViewportAutoexposeHelper {
 	 * 
 	 * @return the bounds
 	 */
-	private Rectangle getRect() {
+	private Rectangle getInnerBounds() {
 		Viewport port = findViewport(owner);
 
 		Rectangle rect = Rectangle.SINGLETON.getCopy();
@@ -128,7 +128,7 @@ public class FullViewportAutoexposeHelper extends ViewportAutoexposeHelper {
 	 * @param scrollOffset absolute offset value
 	 * @return
 	 */
-	private Point getNewLoc(Point old, int direction, int scrollOffset) {
+	private Point getNewLocation(Point old, int direction, int scrollOffset) {
 		Point loc = old.getCopy();
 		if ((direction & PositionConstants.SOUTH) != 0) loc.y += scrollOffset;
 		else if ((direction & PositionConstants.NORTH) != 0) loc.y -= scrollOffset;
