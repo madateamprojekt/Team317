@@ -124,7 +124,8 @@ public class AddAttributeAction extends SingleSelectionAction  {
 
 	@Override
 	public void run() {
-
+		
+		
 		final Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		final ManageAttributesDialog manageAttributesDialog = new ManageAttributesDialog(shell, featureModel);
 		// inform ui to update
@@ -137,6 +138,7 @@ public class AddAttributeAction extends SingleSelectionAction  {
 				FMUIPlugin.getDefault().logError(e);
 			}
 		}
+		featureModel.fireEvent(new FeatureIDEEvent(featureModel, EventType.FEATURE_ATTRIBUTE_ADDED));
 	}
 
 	@Override

@@ -143,9 +143,9 @@ public class AddAttributeDialog extends Dialog {
 
 		final Composite dialog = (Composite) super.createDialogArea(parent);
 		dialog.setBackground(new Color(parent.getDisplay(), 255, 255, 255));
-//		final GridLayout gbc = new GridLayout();
-//		gbc.numColumns = 2;
-//		dialog.setLayout(gridLayout);
+//		final GridLayout gbc = new GridBagLayout();
+		gbc.numColumns = 2;
+		dialog.setLayout(gridLayout);
 		
 //		dialog.setLayoutData(new GridBagLayout());
 //		JLabel jLabel = new JLabel("Selected Feature: " + feature.getName());
@@ -263,8 +263,39 @@ public class AddAttributeDialog extends Dialog {
 //						rec = recursive.equals("true");
 //						conf = configurable.equals("true");
 //
-//						FeatureAttribute attribute = new FeatureAttribute(name, value, type, unit, rec, conf);
-//						feature.getStructure().getAttributeList().add(attribute);
+						if (!name.isEmpty()) {
+							thro error
+						} else {
+							String nameLowerCase = name.toLowerCase();
+							for (FeatureAttribute fa :feature.getStructure().getAttributeList()) {
+								if (fa.getName().toLowerCase().equals(nameLowerCase)) {
+									throwerror;
+								}
+							}
+							for (FeatureAttributeInherited fai : feature.getStructure().getAttributeListInherited()) {
+								if (fai.getName().toLowerCase().equals(nameLowerCase)) {
+									throwerror;
+									break;
+								}
+							}
+						}
+						if (rec == true) {
+							for (IFeatureStructure iFeature : feature.getStructure().getChildren()) {
+								for (FeatureAttribute fa : iFeature.getAttributeList()) {
+									if (fa.getName().toLowerCase().equals(nameLowerCase)) {
+										throwerror;
+									}
+								}
+							}
+						}
+						FeatureAttribute attribute = new FeatureAttribute(name, value, type, unit, rec, conf);
+						if (attribute.checkValue()) {
+							if ()
+							feature.getStructure().getAttributeList().add(attribute);
+						} else {
+							textFieldValue.tooltip
+						}
+
 //				dialog.dispose();
 //			}
 //		});
