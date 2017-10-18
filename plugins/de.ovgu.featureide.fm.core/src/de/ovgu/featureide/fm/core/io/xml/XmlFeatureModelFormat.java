@@ -637,15 +637,15 @@ public class XmlFeatureModelFormat extends AXMLFormat<IFeatureModel> implements 
 		}
 	}
 
-	private void parseFeatures(NodeList nodeList, IFeature parent, LinkedList<FeatureAttribute> parentList) throws UnsupportedModelException {
+	private void parseFeatures(NodeList nodeList, IFeature feature, LinkedList<FeatureAttribute> parentList) throws UnsupportedModelException {
 
 		final LinkedList<FeatureAttribute> attributeList = new LinkedList<>();
 		final LinkedList<FeatureAttributeInherited> inheritedList = new LinkedList<>();
 		final LinkedList<FeatureAttribute> attributeListRecursive = new LinkedList<FeatureAttribute>();
 
-		if (parent != null) {
+		if (parentList != null) {
 			for (final FeatureAttribute fa : parentList) {
-				final FeatureAttributeInherited fai = new FeatureAttributeInherited(fa);
+				FeatureAttributeInherited fai = new FeatureAttributeInherited(fa);
 				attributeListRecursive.add(fa);
 				inheritedList.add(fai);
 			}
@@ -661,16 +661,20 @@ public class XmlFeatureModelFormat extends AXMLFormat<IFeatureModel> implements 
 					nodeValue = nodeValue.substring(1, nodeValue.length() - 1);
 					nodeValue = nodeValue.trim();
 				}
-				parent.getProperty().setDescription(nodeValue);
+				feature.getProperty().setDescription(nodeValue);
 				continue;
 			}
 
 			if (nodeName.equals(ATTRIBUTE)) {
 				parseAttribute(e, attributeList, attributeListRecursive, inheritedList);
-				parent.getStructure().setAttributeList(attributeList);
-				parent.getStructure().setAttributeListInherited(inheritedList);
+				feature.getStructure().setAttributeList(attributeList);
+				feature.getStructure().setAttributeListInherited(inheritedList);
 				continue;
-			}
+			} 
+//			if(parentList != null) {
+//				parent.getStructure().setAttributeListInherited(inheritedList);
+//			}
+			
 
 			boolean mandatory = false;
 			boolean _abstract = false;
@@ -725,10 +729,10 @@ public class XmlFeatureModelFormat extends AXMLFormat<IFeatureModel> implements 
 			f.getStructure().setHidden(hidden);
 
 			object.addFeature(f);
-			if (parent == null) {
+			if (feature == null) {
 				object.getStructure().setRoot(f.getStructure());
 			} else {
-				parent.getStructure().addChild(f.getStructure());
+				feature.getStructure().addChild(f.getStructure());
 			}
 			if (e.hasChildNodes()) {
 				parseFeatures(e.getChildNodes(), f, attributeListRecursive);
@@ -747,9 +751,10 @@ public class XmlFeatureModelFormat extends AXMLFormat<IFeatureModel> implements 
 	 * Parse the struct section to add features to the model.
 	 */
 	private void parseStruct(NodeList struct) throws UnsupportedModelException {
-		for (final Element e : getElements(struct)) {
+//		for (final Element e : getElements(struct)) {
+			final Element e = getElements(struct).get(0);
 			parseFeatures(e.getChildNodes(), null, null);
-		}
+//		}
 	}
 
 	/**

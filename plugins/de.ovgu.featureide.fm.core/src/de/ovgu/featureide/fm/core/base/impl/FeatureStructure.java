@@ -480,14 +480,13 @@ public class FeatureStructure implements IFeatureStructure {
 	@Override
 	public void setAttributeListInherited(LinkedList<FeatureAttributeInherited> attListRecursive) {
 		inheritedList = attListRecursive;
-
 	}
 
 	@Override
 	public void updateFeatureAttributeInherited(FeatureAttribute attribute) {
-		final FeatureAttributeInherited fai = new FeatureAttributeInherited(attribute);
-		getAttributeListInherited().add(fai);
 		for (final IFeatureStructure IFeature : getChildren()) {
+			final FeatureAttributeInherited fai = new FeatureAttributeInherited(attribute);
+			IFeature.getAttributeListInherited().add(fai);
 			IFeature.updateFeatureAttributeInherited(attribute);
 		}
 

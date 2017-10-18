@@ -32,6 +32,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 import de.ovgu.featureide.fm.core.base.IFeatureModel;
+import de.ovgu.featureide.fm.core.base.event.FeatureIDEEvent;
+import de.ovgu.featureide.fm.core.base.event.FeatureIDEEvent.EventType;
 import de.ovgu.featureide.fm.core.io.EclipseFileSystem;
 import de.ovgu.featureide.fm.ui.FMUIPlugin;
 import de.ovgu.featureide.fm.ui.editors.ManageAttributesDialog;
@@ -75,6 +77,7 @@ public class ManageAttributesAction extends SingleSelectionAction {
 		final ManageAttributesDialog manageAttributesDialog = new ManageAttributesDialog(shell, featureModel);
 		// inform ui to update
 		if (manageAttributesDialog.open() == Window.OK) {
+			featureModel.fireEvent(new FeatureIDEEvent(featureModel, EventType.FEATURE_ATTRIBUTE_CHANGED));
 			final IProject project = EclipseFileSystem.getResource(featureModel.getSourceFile()).getProject();
 			try {
 				project.touch(null);

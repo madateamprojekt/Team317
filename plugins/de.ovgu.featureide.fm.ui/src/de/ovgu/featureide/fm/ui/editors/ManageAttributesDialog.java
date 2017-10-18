@@ -536,10 +536,24 @@ public class ManageAttributesDialog extends Dialog {
 
 				}
 				for (final FeatureAttributeInherited attributeInh : attListInh) {
-					if (!isInList(attList, attributeInh.getParent())) {
+//					if (!isInList(attList, attributeInh.getParent())) {
 						feature.add(attributeInh);
 					}
-				}
+//				}
+//				IFeatureStructure parentFeature = f.getStructure().getParent();
+//				if(parentFeature != null) {
+//					LinkedList<FeatureAttribute> parentFeatureAttributeList = parentFeature.getAttributeList();
+//					for(final FeatureAttribute attribute : parentFeatureAttributeList) {
+//						if(attribute.getRecursive()) {
+//							for(FeatureAttributeInherited featureAttributeIn : att) {
+//								if() {
+//									FeatureAttributeInherited featureAttributeInherited = new FeatureAttributeInherited(attribute);
+//									feature.add(featureAttributeInherited);
+//								}
+//							}
+//						}
+//					}
+//				}
 				for (int i = 0; i < f.getStructure().getChildrenCount(); i++) {
 					final IFeature cf = f.getStructure().getChildren().get(i).getFeature();
 					feature.add(cf);
@@ -801,6 +815,9 @@ public class ManageAttributesDialog extends Dialog {
 		@Override
 		protected void setValue(Object element, Object value) {
 			((FeatureAttribute) element).setTypeFromString(value.toString());
+			if(!((FeatureAttribute) element).checkValue()){
+				((FeatureAttribute) element).setValue("");
+			}
 			getViewer().update(element, null);
 		}
 	}

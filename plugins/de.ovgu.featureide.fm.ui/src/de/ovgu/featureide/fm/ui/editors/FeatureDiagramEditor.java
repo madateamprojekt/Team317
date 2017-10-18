@@ -1363,6 +1363,12 @@ public class FeatureDiagramEditor extends ScrollingGraphicalViewer implements GU
 		case FEATURE_ATTRIBUTE_ADDED:
 			featureModelEditor.setPageModified(true);
 			break;
+		case FEATURE_ATTRIBUTE_CHANGED:
+			featureModelEditor.setPageModified(true);
+			break;	
+		case FEATURE_ATTRIBUTE_DELETED:
+			featureModelEditor.setPageModified(true);
+			break;
 		case DEFAULT:
 			break;
 		default:
